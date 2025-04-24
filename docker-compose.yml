@@ -15,6 +15,9 @@ services:
       - ${POSTGRES_DATA_PATH}:/var/lib/postgresql/data
     env_file:
       - run.env
+    networks:
+      default:
+        ipv4_address: 10.89.4.2
   mattermost:
     depends_on:
       - postgres
@@ -33,9 +36,26 @@ services:
       - ${MATTERMOST_PLUGINS_PATH}:/mattermost/plugins:rw
       - ${MATTERMOST_CLIENT_PLUGINS_PATH}:/mattermost/client/plugins:rw
       - ${MATTERMOST_BLEVE_INDEXES_PATH}:/mattermost/bleve-indexes:rw
+      - mattermost:/mattermost:rw
     env_file:
       - run.env
+      - path: run.env.local
+        required: false
+    networks:
+      default:
+        ipv4_address: 10.89.4.3
     build:
       context: docker
       args:
         - MATTERMOST_IMAGE_TAG=${MATTERMOST_IMAGE_TAG}
+
+volumes:
+  mattermost:
+
+networks:
+  default:
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.89.4.0/24
+          gateway: 10.89.4.1
