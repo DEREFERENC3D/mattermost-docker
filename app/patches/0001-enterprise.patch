@@ -1,0 +1,92 @@
+From f738e3b74ccc3746fe52d857080bd2a246e5cfbb Mon Sep 17 00:00:00 2001
+From: DEREFERENC3D <DEREFERENC3D@protonmail.com>
+Date: Fri, 14 Feb 2025 12:07:11 +0100
+Subject: [PATCH 1/1] server: Fix build
+
+Fixes:
+* Undefined types during build,
+* Enterprise build without the closed-source.
+
+Always builds enterprise version.
+
+---
+ server/Makefile         | 28 +++++-----------------------
+ server/build/release.mk |  5 -----
+ 2 files changed, 5 insertions(+), 28 deletions(-)
+
+diff --git a/server/Makefile b/server/Makefile
+index f95dd217be..1df14e54c5 100644
+--- a/server/Makefile
++++ b/server/Makefile
+@@ -63,22 +63,13 @@ BUILD_ENTERPRISE ?= true
+ BUILD_ENTERPRISE_READY = false
+ BUILD_TYPE_NAME = team
+ BUILD_HASH_ENTERPRISE = none
+-ifneq ($(wildcard $(BUILD_ENTERPRISE_DIR)/.),)
+-	MMCTL_TESTFLAGS += -ldflags '-X "$(MMCTL_PKG).EnableEnterpriseTests=true" -X "github.com/mattermost/mattermost/server/public/model.BuildEnterpriseReady=true"'
+-	MMCTL_BUILD_TAGS += enterprise
+ 
+-  ifeq ($(BUILD_ENTERPRISE),true)
++ifeq ($(BUILD_ENTERPRISE),true)
++	MMCTL_TESTFLAGS += -ldflags -X "github.com/mattermost/mattermost/server/public/model.BuildEnterpriseReady=true"'
++	MMCTL_BUILD_TAGS += enterprise
+ 	BUILD_ENTERPRISE_READY = true
+ 	BUILD_TYPE_NAME = enterprise
+-	BUILD_HASH_ENTERPRISE = $(shell cd $(BUILD_ENTERPRISE_DIR) && git rev-parse HEAD)
+-	BUILD_TAGS += enterprise
+-  else
+-	BUILD_ENTERPRISE_READY = false
+-	BUILD_TYPE_NAME = team
+-  endif
+-else
+-	BUILD_ENTERPRISE_READY = false
+-	BUILD_TYPE_NAME = team
++	BUILD_HASH_ENTERPRISE = $(shell git rev-parse HEAD)
+ endif
+ 
+ # Clean up the old means of importing enterprise source, if it exists
+@@ -163,13 +154,7 @@ PLUGIN_PACKAGES += mattermost-plugin-msteams-meetings-v2.2.0
+ PLUGIN_PACKAGES += mattermost-plugin-metrics-v0.5.3
+ PLUGIN_PACKAGES += mattermost-plugin-channel-export-v1.2.1
+ 
+-EE_PACKAGES=$(shell $(GO) list $(BUILD_ENTERPRISE_DIR)/...)
+-
+-ifeq ($(BUILD_ENTERPRISE_READY),true)
+-  ALL_PACKAGES=$(TE_PACKAGES) $(EE_PACKAGES)
+-else
+-  ALL_PACKAGES=$(TE_PACKAGES)
+-endif
++ALL_PACKAGES=$(TE_PACKAGES)
+ 
+ CONFIG_FILE_PATH ?= ./config/config.json
+ 
+@@ -398,9 +383,6 @@ ifneq ($(IGNORE_GO_WORK_IF_EXISTS),true)
+ 	$(GO) work init
+ 	$(GO) work use .
+ 	$(GO) work use ./public
+-ifeq ($(BUILD_ENTERPRISE_READY),true)
+-	$(GO) work use ../../enterprise
+-endif
+ endif
+ 
+ check-style: plugin-checker vet golangci-lint ## Runs style/lint checks
+diff --git a/server/build/release.mk b/server/build/release.mk
+index 83ae7138e2..1f758ce8e4 100644
+--- a/server/build/release.mk
++++ b/server/build/release.mk
+@@ -126,12 +126,7 @@ package-prep:
+ 	cp -RL $(BUILD_WEBAPP_DIR)/channels/dist/* $(DIST_PATH)/client
+ 
+ 	@# Help files
+-ifeq ($(BUILD_ENTERPRISE_READY),true)
+-	cp $(BUILD_ENTERPRISE_DIR)/ENTERPRISE-EDITION-LICENSE.txt $(DIST_PATH)
+-	cp -L $(BUILD_ENTERPRISE_DIR)/cloud/config/cloud_defaults.json $(DIST_PATH)/config
+-else
+ 	cp build/MIT-COMPILED-LICENSE.md $(DIST_PATH)
+-endif
+ 	cp ../NOTICE.txt $(DIST_PATH)
+ 	cp ../README.md $(DIST_PATH)
+ 	if [ -f bin/manifest.txt ]; then \
+-- 
+2.49.0
+

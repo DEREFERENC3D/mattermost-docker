@@ -1,0 +1,73 @@
+From ff161a40bf07ffd35c16691cbbda5ecf0ebfe8db Mon Sep 17 00:00:00 2001
+From: DEREFERENC3D <DEREFERENC3D@protonmail.com>
+Date: Fri, 14 Feb 2025 12:06:17 +0100
+Subject: [PATCH 1/1] server: Remove license certificate validation, support
+ signatureless license files
+
+---
+ server/channels/utils/license.go | 34 ++++----------------------------
+ 1 file changed, 4 insertions(+), 30 deletions(-)
+
+diff --git a/server/channels/utils/license.go b/server/channels/utils/license.go
+index fdd13b92d8..8cf8fe67dc 100644
+--- a/server/channels/utils/license.go
++++ b/server/channels/utils/license.go
+@@ -4,13 +4,9 @@
+ package utils
+ 
+ import (
+-	"crypto"
+-	"crypto/rsa"
+ 	"crypto/sha512"
+-	"crypto/x509"
+ 	"encoding/base64"
+ 	"encoding/json"
+-	"encoding/pem"
+ 	"fmt"
+ 	"io"
+ 	"net/http"
+@@ -66,37 +62,15 @@ func (l *LicenseValidatorImpl) ValidateLicense(signed []byte) (string, error) {
+ 		decoded = decoded[:len(decoded)-1]
+ 	}
+ 
+-	if len(decoded) <= 256 {
+-		return "", fmt.Errorf("Signed license not long enough")
+-	}
+-
++	// cut off the license signature
+ 	plaintext := decoded[:len(decoded)-256]
+-	signature := decoded[len(decoded)-256:]
+-
+-	var publicKey []byte
+-	switch model.GetServiceEnvironment() {
+-	case model.ServiceEnvironmentProduction:
+-		publicKey = productionPublicKey
+-	case model.ServiceEnvironmentTest, model.ServiceEnvironmentDev:
+-		publicKey = testPublicKey
+-	}
+-	block, _ := pem.Decode(publicKey)
+-
+-	public, err := x509.ParsePKIXPublicKey(block.Bytes)
+-	if err != nil {
+-		return "", fmt.Errorf("Encountered error signing license: %w", err)
++	if !json.Valid(plaintext) {
++		// there likely was no signature and we just cut off part of the JSON
++		plaintext = decoded
+ 	}
+ 
+-	rsaPublic := public.(*rsa.PublicKey)
+-
+ 	h := sha512.New()
+ 	h.Write(plaintext)
+-	d := h.Sum(nil)
+-
+-	err = rsa.VerifyPKCS1v15(rsaPublic, crypto.SHA512, d, signature)
+-	if err != nil {
+-		return "", fmt.Errorf("Invalid signature: %w", err)
+-	}
+ 
+ 	return string(plaintext), nil
+ }
+-- 
+2.49.0
+
