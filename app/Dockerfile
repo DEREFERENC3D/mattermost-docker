@@ -33,7 +33,8 @@ RUN git clone \
 	--single-branch \
 	-b v${MATTERMOST_VERSION} \
 	https://github.com/mattermost/mattermost.git .
-COPY build.sh .
+COPY build.sh patches/0001-enterprise.patch .
+RUN git apply 0001-enterprise.patch
 
 ARG OS=linux
 ARG ARCH=current
