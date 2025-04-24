@@ -1,3 +1,47 @@
+FROM alpine AS build
+
+# build dependencies
+RUN apk add --no-cache \
+	# to obtain the source
+	git \
+	# to build the backend
+	go \
+	# needed by the package script
+	gpg \
+	gpg-agent \
+	curl \
+	# to build the frontend (web app)
+	nodejs \
+	npm \
+	# for the build script
+	bash \
+	# build system
+	make \
+	# native Node.JS modules' dependencies
+	automake \
+	autoconf \
+	libtool \
+	pkgconf \
+	nasm \
+	zlib-dev
+
+WORKDIR /build
+
+ARG MATTERMOST_VERSION
+RUN git clone \
+	--depth 1 \
+	--single-branch \
+	-b v${MATTERMOST_VERSION} \
+	https://github.com/mattermost/mattermost.git .
+COPY build.sh .
+
+ARG OS=linux
+ARG ARCH=current
+# if this is not set, the build counts as a "development" build
+# and features such as base URL setting will break
+ARG BUILD_NUMBER
+RUN chmod +x build.sh && ./build.sh
+
 FROM alpine:3.21.2
 
 # Some ENV variables
@@ -8,9 +52,6 @@ ENV MM_INSTALL_TYPE=docker
 ARG PUID=1000
 ARG PGID=1000
 ARG MM_LISTEN_PORT=8000
-ARG TARGETOS
-ARG TARGETARCH
-ARG MM_VERSION
 
 # Install some needed packages
 RUN apk add --no-cache \
@@ -27,19 +68,30 @@ RUN apk add --no-cache \
 	tzdata \
 	&& rm -rf /tmp/*
 
-# Get Mattermost
-RUN mkdir -p /mattermost/data /mattermost/plugins /mattermost/client/plugins \
-        && curl -L https://github.com/remiheens/mattermost-docker-arm/releases/download/${MM_VERSION}/mattermost-${MM_VERSION}-${TARGETOS}-${TARGETARCH}.tar.gz | tar -C /mattermost --strip-components=1 -xvz \
-        && cp /mattermost/config/config.json /mattermost/config.json.save \
-        && rm -rf /mattermost/config/config.json \
-        && addgroup -g ${PGID} mattermost \
-        && adduser -D -u ${PUID} -G mattermost -h /mattermost -D mattermost \
-        && chown -R mattermost:mattermost /mattermost/config.json.save /mattermost/plugins /mattermost/client/plugins \
-        && setcap cap_net_bind_service=+ep /mattermost/bin/mattermost
+# Prepare user and group for the daemon
+RUN addgroup -g ${PGID} mattermost \
+	&& adduser -D -u ${PUID} -G mattermost -h /mattermost -D mattermost
 
-# Configure entrypoint and command
+# Copy over start scripts
 COPY priv-entrypoint.sh /
 COPY entrypoint.sh /
+
+# Get Mattermost
+COPY --from=build --chown=mattermost:mattermost /build/dist/mattermost /mattermost
+# Prepare data directories
+RUN mkdir -p /mattermost/data /mattermost/plugins /mattermost/client/plugins
+# Grab the default config file
+COPY --from=build /build/server/dist/mattermost/config/config.json /mattermost/config/config.json.save
+
+# Fix permissions
+RUN chmod +x /mattermost/bin/mattermost \
+	&& chmod +x /mattermost/bin/mmctl \
+	&& chmod +x priv-entrypoint.sh \
+	&& chmod +x entrypoint.sh \
+	# Add required capability
+	&& setcap cap_net_bind_service=+ep /mattermost/bin/mattermost
+
+# Configure entrypoint and command
 ENTRYPOINT ["/priv-entrypoint.sh"]
 
 WORKDIR /mattermost
