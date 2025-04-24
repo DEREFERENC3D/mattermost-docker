@@ -28,11 +28,11 @@ RUN apk add --no-cache \
 
 WORKDIR /build
 
-ARG MATTERMOST_VERSION
+ARG MATTERMOST_IMAGE_TAG
 RUN git clone \
 	--depth 1 \
 	--single-branch \
-	-b v${MATTERMOST_VERSION} \
+	-b ${MATTERMOST_IMAGE_TAG} \
 	https://github.com/mattermost/mattermost.git .
 COPY build.sh patches/0001-enterprise.patch patches/0002-crack.patch .
 RUN git apply 0001-enterprise.patch 0002-crack.patch

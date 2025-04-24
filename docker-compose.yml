@@ -2,7 +2,7 @@ version: "3"
 
 services:
   db:
-    image: mattermost-db:v${MATTERMOST_VERSION}
+    image: mattermost-db:${MATTERMOST_IMAGE_TAG}
     build:
       context: db
     restart: ${RESTART_POLICY}
@@ -12,11 +12,11 @@ services:
     env_file:
       - run.env
   app:
-    image: mattermost-enterprise-edition:v${MATTERMOST_VERSION}
+    image: mattermost-enterprise-edition:${MATTERMOST_IMAGE_TAG}
     build:
       context: app
       args:
-        - MATTERMOST_VERSION=${MATTERMOST_VERSION}
+        - MATTERMOST_IMAGE_TAG=${MATTERMOST_IMAGE_TAG}
     restart: ${RESTART_POLICY}
     volumes:
       - ./volumes/app/mattermost/config:/mattermost/config:rw

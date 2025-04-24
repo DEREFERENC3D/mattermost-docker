@@ -25,15 +25,15 @@ jobs:
         source .env
         set +o allexport
 
-        echo "Last known release: $MATTERMOST_VERSION"
+        echo "Last known release: $MATTERMOST_IMAGE_TAG"
         echo "Latest release: ${{ env.LATEST_RELEASE }}"
 
-        if [ "${{ env.LATEST_RELEASE }}" != "$MATTERMOST_VERSION" ]; then
+        if [ "${{ env.LATEST_RELEASE }}" != "$MATTERMOST_IMAGE_TAG" ]; then
           if [[ "${{ env.LATEST_RELEASE }}" =~ v([0-9]+)\.([0-9]+)\.([0-9]+) ]]; then
             major="${BASH_REMATCH[1]}"
             minor="${BASH_REMATCH[2]}"
             patch="${BASH_REMATCH[3]}"
-  
+
             echo "New release detected"
 
             # If branch exists, do nothing
@@ -43,8 +43,8 @@ jobs:
               exit 0
             fi
 
-            # Branch DNE, update MATTERMOST_VERSION
-            sed -i "s/MATTERMOST_VERSION=\(.*\)/MATTERMOST_VERSION=${{ env.LATEST_RELEASE }}/" .env
+            # Branch DNE, update MATTERMOST_IMAGE_TAG
+            sed -i "s/MATTERMOST_IMAGE_TAG=\(.*\)/MATTERMOST_IMAGE_TAG=${{ env.LATEST_RELEASE }}/" .env
 
             echo "BRANCH_NAME=upgrade-$major.$minor" >> $GITHUB_ENV
             echo "NEW_RELEASE=true" >> $GITHUB_ENV
