@@ -22,7 +22,7 @@ jobs:
       id: compare_release
       run: |
         set -o allexport
-        source mattermost-release.txt
+        source .env
         set +o allexport
 
         echo "Last known release: $MATTERMOST_VERSION"
@@ -44,7 +44,7 @@ jobs:
             fi
 
             # Branch DNE, update MATTERMOST_VERSION
-            sed -i "s/MATTERMOST_VERSION=\(.*\)/MATTERMOST_VERSION=${{ env.LATEST_RELEASE }}/" mattermost-release.txt
+            sed -i "s/MATTERMOST_VERSION=\(.*\)/MATTERMOST_VERSION=${{ env.LATEST_RELEASE }}/" .env
 
             echo "BRANCH_NAME=upgrade-$major.$minor" >> $GITHUB_ENV
             echo "NEW_RELEASE=true" >> $GITHUB_ENV
@@ -54,14 +54,14 @@ jobs:
           echo "NEW_RELEASE=false" >> $GITHUB_ENV
         fi
 
-    - name: Create or update mattermost-release.txt
+    - name: Update Mattermost version
       id: set_branch_for_upgrade
       if: env.NEW_RELEASE == 'true'
       run: |
         git config --global user.name 'github-actions'
         git config --global user.email 'github-actions@github.com'
         git checkout -b ${{ env.BRANCH_NAME }} || git checkout ${{ env.BRANCH_NAME }}
-        git add mattermost-release.txt
+        git add .env
         git commit -m "chore: Upgrade to ${{ env.LATEST_RELEASE }}"
         git push origin ${{ env.BRANCH_NAME }}
 
@@ -72,7 +72,7 @@ jobs:
       run: |
         gh label list | grep -q auto-upgrade || gh label create auto-upgrade \
           -c FABC7B \
-          -d "Pull requests that upgrade mattermost version automatically"
+          -d "Pull requests that upgrade Mattermost version automatically"
         gh pr create \
           --assignee @me \
           --base main \
@@ -80,4 +80,4 @@ jobs:
           --head ${{ env.BRANCH_NAME }} \
           --label auto-upgrade \
           --reviewer remiheens \
-          --title "Update files for new mattermost release ${{ env.LATEST_RELEASE }}"
+          --title "Update Mattermost to version ${{ env.LATEST_RELEASE }}"
