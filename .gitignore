@@ -7,12 +7,10 @@
 # Generated data
 volumes
 secrets/*
-docker-compose.yml
 build
 
 .wget-hsts
 go*.tar.gz*
-.env
 .bash_history
 
 tmp

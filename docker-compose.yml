@@ -2,30 +2,29 @@ version: "3"
 
 services:
   db:
-    image: rheens/mattermost-db:v9.8.1
+    image: mattermost-db:v${MATTERMOST_VERSION}
     build:
       context: db
-    restart: unless-stopped
+    restart: ${RESTART_POLICY}
     volumes:
       - ./volumes/db/var/lib/postgresql/data:/var/lib/postgresql/data
       - /etc/localtime:/etc/localtime:ro
     env_file:
       - run.env
   app:
-    image: rheens/mattermost-app:v9.8.1
+    image: mattermost-enterprise-edition:v${MATTERMOST_VERSION}
     build:
       context: app
       args:
-        - MM_VERSION=v9.8.1
-        - GOOS=linux
-        - GOARCH=arm64
-    restart: unless-stopped
+        - MATTERMOST_VERSION=${MATTERMOST_VERSION}
+    restart: ${RESTART_POLICY}
     volumes:
       - ./volumes/app/mattermost/config:/mattermost/config:rw
       - ./volumes/app/mattermost/data:/mattermost/data:rw
       - ./volumes/app/mattermost/logs:/mattermost/logs:rw
       - ./volumes/app/mattermost/plugins:/mattermost/plugins:rw
       - ./volumes/app/mattermost/client-plugins:/mattermost/client/plugins:rw
+      - ./volumes/app/mattermost/bleve-indexes:/mattermost/bleve-indexes:rw
       - /etc/localtime:/etc/localtime:ro
     env_file:
       - run.env
