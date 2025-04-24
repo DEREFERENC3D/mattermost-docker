@@ -23,6 +23,7 @@ RUN apk add --no-cache \
 	libtool \
 	pkgconf \
 	nasm \
+	clang \
 	zlib-dev
 
 WORKDIR /build
