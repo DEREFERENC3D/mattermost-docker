@@ -1,17 +1,2 @@
-
-# Elastic Beanstalk Files
-.elasticbeanstalk/*
-!.elasticbeanstalk/*.cfg.yml
-!.elasticbeanstalk/*.global.yml
-
-# Generated data
-volumes
-secrets/*
-build
-
-.wget-hsts
-go*.tar.gz*
-.bash_history
-
-tmp
-build.env
+# default data location
+/volumes/
