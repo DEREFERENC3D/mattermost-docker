@@ -44,7 +44,7 @@ ARG ARCH=current
 ARG BUILD_NUMBER
 RUN chmod +x build.sh && ./build.sh
 
-FROM alpine:3.21.2
+FROM alpine
 
 # Some ENV variables
 ENV PATH="/mattermost/bin:${PATH}"
