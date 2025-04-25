@@ -1,14 +1,18 @@
 version: "3"
 
 services:
-  db:
-    image: mattermost-db:${MATTERMOST_IMAGE_TAG}
-    build:
-      context: db
+  postgres:
+    image: postgres:${POSTGRES_IMAGE_TAG}
     restart: ${RESTART_POLICY}
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 100
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/run/postgresql
     volumes:
-      - ./volumes/db/var/lib/postgresql/data:/var/lib/postgresql/data
-      - /etc/localtime:/etc/localtime:ro
+      - ${POSTGRES_DATA_PATH}:/var/lib/postgresql/data
     env_file:
       - run.env
   app:

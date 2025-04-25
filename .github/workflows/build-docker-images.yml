@@ -2,7 +2,7 @@ name: Docker build and Publish
 on:
   push:
     tags:
-     - v*
+      - v*
 
 env:
   DEBIAN_RELEASE: buster
@@ -17,17 +17,6 @@ jobs:
 
     permissions:
       packages: write
-
-    strategy:
-      matrix:
-        include:
-          - image: app
-            name: mattermost-enterprise-edition
-            args: |
-              MATTERMOST_IMAGE_TAG=${{ github.ref_name }}
-              BUILD_NUMBER=${{ github.run_id }}
-          - image: db
-            name: mattermost-db
 
     steps:
       - name: Set up QEMU
@@ -47,16 +36,18 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ github.repository }}/${{ matrix.name }}
+          images: ${{ env.REGISTRY }}/${{ github.repository }}/mattermost-enterprise-edition
           tags: |
             type=semver,pattern=v{{major}}.{{minor}}.{{patch}}
 
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: "{{defaultContext}}:${{ matrix.image }}"
+          context: "{{defaultContext}}:app"
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: ${{ matrix.args }}
+          build-args: |
+            MATTERMOST_IMAGE_TAG=${{ github.ref_name }}
+            BUILD_NUMBER=${{ github.run_id }}

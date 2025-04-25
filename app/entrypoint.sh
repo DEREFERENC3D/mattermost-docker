@@ -6,7 +6,7 @@ generate_salt() {
 }
 
 # Read environment variables or set default values
-DB_HOST=${DB_HOST:-db}
+DB_HOST=${DB_HOST:-postgres}
 DB_PORT_NUMBER=${DB_PORT_NUMBER:-5432}
 # see https://www.postgresql.org/docs/current/libpq-ssl.html
 # for usage when database connection requires encryption
@@ -18,7 +18,7 @@ DB_PORT_NUMBER=${DB_PORT_NUMBER:-5432}
 # sslrootcert and sslcrl reliably, so use these PostgreSQL-specified variables
 # to set names if using a location other than default
 DB_USE_SSL=${DB_USE_SSL:-disable}
-MM_DBNAME=${MM_DBNAME:-mattermost}
+POSTGRES_DB=${POSTGRES_DB:-mattermost}
 MM_CONFIG=${MM_CONFIG:-/mattermost/config/config.json}
 
 _1=$(echo "$1" | awk '{ s=substr($0, 0, 1); print s; }')
@@ -62,11 +62,11 @@ if [ "$1" = 'mattermost' ]; then
   fi
 
   # Configure database access
-  if [ -z "$MM_SQLSETTINGS_DATASOURCE" ] && [ -n "$MM_USERNAME" ] && [ -n "$MM_PASSWORD" ]; then
+  if [ -z "$MM_SQLSETTINGS_DATASOURCE" ] && [ -n "$POSTGRES_USER" ] && [ -n "$POSTGRES_PASSWORD" ]; then
     echo "Configure database connection..."
     # URLEncode the password, allowing for special characters
-    ENCODED_PASSWORD=$(printf %s "$MM_PASSWORD" | jq -s -R -r @uri)
-    export MM_SQLSETTINGS_DATASOURCE="postgres://$MM_USERNAME:$ENCODED_PASSWORD@$DB_HOST:$DB_PORT_NUMBER/$MM_DBNAME?sslmode=$DB_USE_SSL&connect_timeout=10"
+    ENCODED_PASSWORD=$(printf %s "$POSTGRES_PASSWORD" | jq -s -R -r @uri)
+    export MM_SQLSETTINGS_DATASOURCE="postgres://$POSTGRES_USER:$ENCODED_PASSWORD@$DB_HOST:$DB_PORT_NUMBER/$POSTGRES_DB?sslmode=$DB_USE_SSL&connect_timeout=10"
     echo "OK"
   else
     echo "Using existing database connection"
