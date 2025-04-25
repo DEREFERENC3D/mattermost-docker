@@ -15,20 +15,27 @@ services:
       - ${POSTGRES_DATA_PATH}:/var/lib/postgresql/data
     env_file:
       - run.env
-  app:
+  mattermost:
+    depends_on:
+      - postgres
     image: mattermost-enterprise-edition:${MATTERMOST_IMAGE_TAG}
-    build:
-      context: app
-      args:
-        - MATTERMOST_IMAGE_TAG=${MATTERMOST_IMAGE_TAG}
     restart: ${RESTART_POLICY}
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 200
+    read_only: ${MATTERMOST_CONTAINER_READONLY}
+    tmpfs:
+      - /tmp
     volumes:
-      - ./volumes/app/mattermost/config:/mattermost/config:rw
-      - ./volumes/app/mattermost/data:/mattermost/data:rw
-      - ./volumes/app/mattermost/logs:/mattermost/logs:rw
-      - ./volumes/app/mattermost/plugins:/mattermost/plugins:rw
-      - ./volumes/app/mattermost/client-plugins:/mattermost/client/plugins:rw
-      - ./volumes/app/mattermost/bleve-indexes:/mattermost/bleve-indexes:rw
-      - /etc/localtime:/etc/localtime:ro
+      - ${MATTERMOST_CONFIG_PATH}:/mattermost/config:rw
+      - ${MATTERMOST_DATA_PATH}:/mattermost/data:rw
+      - ${MATTERMOST_LOGS_PATH}:/mattermost/logs:rw
+      - ${MATTERMOST_PLUGINS_PATH}:/mattermost/plugins:rw
+      - ${MATTERMOST_CLIENT_PLUGINS_PATH}:/mattermost/client/plugins:rw
+      - ${MATTERMOST_BLEVE_INDEXES_PATH}:/mattermost/bleve-indexes:rw
     env_file:
       - run.env
+    build:
+      context: docker
+      args:
+        - MATTERMOST_IMAGE_TAG=${MATTERMOST_IMAGE_TAG}
