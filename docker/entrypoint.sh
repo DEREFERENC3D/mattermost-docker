@@ -6,8 +6,7 @@ generate_salt() {
 }
 
 # Read environment variables or set default values
-DB_HOST=${DB_HOST:-postgres}
-DB_PORT_NUMBER=${DB_PORT_NUMBER:-5432}
+DB_HOST=${POSTGRES_HOST:-postgres}
 # see https://www.postgresql.org/docs/current/libpq-ssl.html
 # for usage when database connection requires encryption
 # filenames should be escaped if they contain spaces
@@ -66,7 +65,7 @@ if [ "$1" = 'mattermost' ]; then
     echo "Configure database connection..."
     # URLEncode the password, allowing for special characters
     ENCODED_PASSWORD=$(printf %s "$POSTGRES_PASSWORD" | jq -s -R -r @uri)
-    export MM_SQLSETTINGS_DATASOURCE="postgres://$POSTGRES_USER:$ENCODED_PASSWORD@$DB_HOST:$DB_PORT_NUMBER/$POSTGRES_DB?sslmode=$DB_USE_SSL&connect_timeout=10"
+    export MM_SQLSETTINGS_DATASOURCE="postgres://$POSTGRES_USER:$ENCODED_PASSWORD@$DB_HOST:$DB_PORT_NUMBER/$POSTGRES_DB?sslmode=disable&connect_timeout=10"
     echo "OK"
   else
     echo "Using existing database connection"
