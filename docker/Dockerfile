@@ -78,12 +78,6 @@ RUN mkdir -p /mattermost/data /mattermost/plugins /mattermost/client/plugins
 # Grab the default config file
 COPY --from=build /build/server/dist/mattermost/config/config.json /mattermost/config/config.json
 
-# Fix permissions
-RUN chmod +x /mattermost/bin/mattermost \
-	&& chmod +x /mattermost/bin/mmctl \
-	# Add required capability
-	&& setcap cap_net_bind_service=+ep /mattermost/bin/mattermost
-
 # Configure work directory and entrypoint
 WORKDIR /mattermost
 ENTRYPOINT ["mattermost"]
