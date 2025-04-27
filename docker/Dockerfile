@@ -73,22 +73,16 @@ RUN apk add --no-cache \
 RUN addgroup -g ${PGID} mattermost \
 	&& adduser -D -u ${PUID} -G mattermost -h /mattermost -D mattermost
 
-# Copy over start scripts
-COPY priv-entrypoint.sh /
-COPY entrypoint.sh /
-
 # Get Mattermost
 COPY --from=build --chown=mattermost:mattermost /build/dist/mattermost /mattermost
 # Prepare data directories
 RUN mkdir -p /mattermost/data /mattermost/plugins /mattermost/client/plugins
 # Grab the default config file
-COPY --from=build /build/server/dist/mattermost/config/config.json /mattermost/config/config.json.save
+COPY --from=build /build/server/dist/mattermost/config/config.json /mattermost/config/config.json
 
 # Fix permissions
 RUN chmod +x /mattermost/bin/mattermost \
 	&& chmod +x /mattermost/bin/mmctl \
-	&& chmod +x priv-entrypoint.sh \
-	&& chmod +x entrypoint.sh \
 	# Add required capability
 	&& setcap cap_net_bind_service=+ep /mattermost/bin/mattermost
 
