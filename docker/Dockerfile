@@ -50,7 +50,6 @@ FROM alpine
 ENV PATH="/mattermost/bin:${PATH}"
 ENV MM_INSTALL_TYPE=docker
 
-# Build argument to set Mattermost edition
 ARG PUID=1000
 ARG PGID=1000
 ARG MM_LISTEN_PORT=8000
