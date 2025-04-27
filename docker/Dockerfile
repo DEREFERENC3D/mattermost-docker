@@ -79,7 +79,7 @@ COPY --from=build --chown=mattermost:mattermost /build/dist/mattermost /mattermo
 # Prepare data directories
 RUN mkdir -p /mattermost/data /mattermost/plugins /mattermost/client/plugins
 # Grab the default config file
-COPY --from=build /build/server/dist/mattermost/config/config.json /mattermost/config/config.json
+COPY --from=build --chown=mattermost:mattermost /build/server/dist/mattermost/config/config.json /mattermost/config/config.json
 
 # Drop root privileges - run Mattermost as its dedicated user
 USER mattermost
