@@ -52,7 +52,6 @@ ENV MM_INSTALL_TYPE=docker
 
 ARG PUID=1000
 ARG PGID=1000
-ARG MM_LISTEN_PORT=8000
 
 # Install some needed packages
 RUN apk add --no-cache \
@@ -90,8 +89,8 @@ RUN chmod +x /mattermost/bin/mattermost \
 WORKDIR /mattermost
 ENTRYPOINT ["mattermost"]
 
-# Expose port 8000 of the container
-EXPOSE $MM_LISTEN_PORT
+# Expose the port that Mattermost listens on
+EXPOSE 8065
 
 # Declare volumes for mount point directories
 VOLUME ["/mattermost/data", "/mattermost/logs", "/mattermost/config", "/mattermost/plugins", "/mattermost/client/plugins"]
