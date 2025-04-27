@@ -92,11 +92,9 @@ RUN chmod +x /mattermost/bin/mattermost \
 	# Add required capability
 	&& setcap cap_net_bind_service=+ep /mattermost/bin/mattermost
 
-# Configure entrypoint and command
-ENTRYPOINT ["/priv-entrypoint.sh"]
-
+# Configure work directory and entrypoint
 WORKDIR /mattermost
-CMD ["mattermost"]
+ENTRYPOINT ["mattermost"]
 
 # Expose port 8000 of the container
 EXPOSE $MM_LISTEN_PORT
