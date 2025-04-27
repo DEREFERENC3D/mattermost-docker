@@ -81,6 +81,9 @@ RUN mkdir -p /mattermost/data /mattermost/plugins /mattermost/client/plugins
 # Grab the default config file
 COPY --from=build /build/server/dist/mattermost/config/config.json /mattermost/config/config.json
 
+# Drop root privileges - run Mattermost as its dedicated user
+USER mattermost
+
 # Configure work directory and entrypoint
 WORKDIR /mattermost
 ENTRYPOINT ["mattermost"]
