@@ -46,8 +46,10 @@ RUN chmod +x build.sh && ./build.sh
 
 FROM alpine
 
-# Some ENV variables
+# Set a few environment variables
+# Add Mattermost (the daemon and "mmctl") to the PATH
 ENV PATH="/mattermost/bin:${PATH}"
+# Let Mattermost know it's running in a container
 ENV MM_INSTALL_TYPE=docker
 
 # Install some needed packages
@@ -63,6 +65,7 @@ RUN apk add --no-cache \
 	netcat-openbsd \
 	xmlsec-dev \
 	tzdata \
+	# Clean up the package manager's cache
 	&& rm -rf /tmp/*
 
 # Prepare user and group for the daemon
