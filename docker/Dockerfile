@@ -50,9 +50,6 @@ FROM alpine
 ENV PATH="/mattermost/bin:${PATH}"
 ENV MM_INSTALL_TYPE=docker
 
-ARG PUID=1000
-ARG PGID=1000
-
 # Install some needed packages
 RUN apk add --no-cache \
 	ca-certificates \
@@ -69,6 +66,8 @@ RUN apk add --no-cache \
 	&& rm -rf /tmp/*
 
 # Prepare user and group for the daemon
+ARG PUID=2000
+ARG PGID=2000
 RUN addgroup -g ${PGID} mattermost \
 	&& adduser -D -u ${PUID} -G mattermost -h /mattermost -D mattermost
 
