@@ -97,3 +97,7 @@ jobs:
           name: Mattermost Enterprise Edition ${{ github.ref_name }}
           artifacts: mattermost-enterprise-edition-${{ github.ref_name }}-*.tar.gz.zip/mattermost-enterprise-edition-${{ github.ref_name }}-*.tar.gz
           body: "[Docker images](https://github.com/${{ github.repository }}/pkgs/container/${{ steps.repo-name.outputs.REPO_NAME }}%2Fmattermost-enterprise-edition)"
+      - name: Delete temporary artifacts
+        uses: geekyeggo/delete-artifact@v5
+        with:
+          name: mattermost-enterprise-edition-${{ github.ref_name }}-*.tar.gz.zip
