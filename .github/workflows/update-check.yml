@@ -48,6 +48,7 @@ jobs:
             sed -i "s/MATTERMOST_IMAGE_TAG=\(.*\)/MATTERMOST_IMAGE_TAG=${{ env.LATEST_RELEASE }}/" .env
 
             echo "BRANCH_NAME=upgrade-$major.$minor.$patch" >> $GITHUB_ENV
+            echo "TAG_NAME=v$major.$minor.$patch" >> $GITHUB_ENV
             echo "NEW_RELEASE=true" >> $GITHUB_ENV
           fi
         else
@@ -64,7 +65,8 @@ jobs:
         git checkout -b ${{ env.BRANCH_NAME }} || git checkout ${{ env.BRANCH_NAME }}
         git add .env
         git commit -m "chore: Upgrade to ${{ env.LATEST_RELEASE }}"
-        git push origin ${{ env.BRANCH_NAME }}
+        git tag ${{ env.TAG_NAME }}
+        git push origin ${{ env.BRANCH_NAME }} ${{ env.TAG_NAME }}
 
     - name: Create pull request via GitHub CLI
       if: env.NEW_RELEASE == 'true'
