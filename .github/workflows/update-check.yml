@@ -68,7 +68,7 @@ jobs:
     - name: Create pull request via GitHub CLI
       if: env.NEW_RELEASE == 'true'
       env:
-        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        GH_TOKEN: ${{ github.token }}
       run: |
         gh label list | grep -q auto-upgrade || gh label create auto-upgrade \
           -c FABC7B \
