@@ -75,7 +75,7 @@ jobs:
           -c FABC7B \
           -d "Pull requests that upgrade Mattermost version automatically"
         gh pr create \
-          --assignee @me \
+          --assignee ${{ github.actor }} \
           --base main \
           --body "" \
           --head ${{ env.BRANCH_NAME }} \
