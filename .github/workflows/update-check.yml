@@ -79,5 +79,5 @@ jobs:
           --body "" \
           --head ${{ env.BRANCH_NAME }} \
           --label auto-upgrade \
-          --reviewer remiheens \
+          --reviewer ${{ github.actor }} \
           --title "Update Mattermost to version ${{ env.LATEST_RELEASE }}"
