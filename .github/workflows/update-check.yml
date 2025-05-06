@@ -84,3 +84,9 @@ jobs:
           --label auto-upgrade \
           --reviewer ${{ github.actor }} \
           --title "Update Mattermost to version ${{ env.LATEST_RELEASE }}"
+
+    - name: Trigger a build
+      if: env.NEW_RELEASE == 'true'
+      uses: benc-uk/workflow-dispatch@v1
+      workflow: build-docker-images.yml
+      ref: ${{ env.TAG_NAME }}
