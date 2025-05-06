@@ -15,7 +15,7 @@ This repository contains source files for building Mattermost server Docker imag
 
 ```bash
 $ # pick a version
-$ export $(grep MATTERMOST_IMAGE_TAG= .env)  # e.g. MATTERMOST_IMAGE_TAG=v10.7.0
+$ export $(grep MATTERMOST_IMAGE_TAG= .env)  # e.g. MATTERMOST_IMAGE_TAG=v10.7.1
 $ cd docker
 $ docker build \
 	-t mattermost-enterprise-edition:$MATTERMOST_IMAGE_TAG \
@@ -41,7 +41,7 @@ Untested, but something like this should work. Make sure to pass `run.env` as th
 
 ```bash
 $ # pick a version
-$ export $(grep MATTERMOST_IMAGE_TAG= .env)  # e.g. MATTERMOST_IMAGE_TAG=v10.7.0
+$ export $(grep MATTERMOST_IMAGE_TAG= .env)  # e.g. MATTERMOST_IMAGE_TAG=v10.7.1
 $ docker run \
 	--name=mattermost \
 	--env-file=run.env \
