@@ -34,22 +34,35 @@ jobs:
             major="${BASH_REMATCH[1]}"
             minor="${BASH_REMATCH[2]}"
             patch="${BASH_REMATCH[3]}"
+            if [[ "$MATTERMOST_IMAGE_TAG" =~ v([0-9]+)\.([0-9]+)\.([0-9]+) ]]; then
+              current_major="${BASH_REMATCH[1]}"
+              current_minor="${BASH_REMATCH[2]}"
+              current_patch="${BASH_REMATCH[3]}"
+              if [[ \
+                "$major" -gt "$current_major" || \
+                ("$major" -eq "$current_major" && "$minor" -gt "$current_minor") || \
+                ("$major" -eq "$current_major" && "$minor" -eq "$current_minor" && "$patch" -gt "$current_patch") || \
+              ]]; then
+                echo "New release detected"
 
-            echo "New release detected"
+                # If branch exists, do nothing
+                if git ls-remote --heads origin | grep -q "upgrade-$major.$minor.$patch"; then
+                  echo "Branch upgrade-$major.$minor.$patch already exists"
+                  echo "NEW_RELEASE=false" >> $GITHUB_ENV
+                  exit 0
+                fi
 
-            # If branch exists, do nothing
-            if git ls-remote --heads origin | grep -q "upgrade-$major.$minor.$patch"; then
-              echo "Branch upgrade-$major.$minor.$patch already exists"
-              echo "NEW_RELEASE=false" >> $GITHUB_ENV
-              exit 0
+                # Branch DNE, update MATTERMOST_IMAGE_TAG
+                sed -i "s/MATTERMOST_IMAGE_TAG=\(.*\)/MATTERMOST_IMAGE_TAG=${{ env.LATEST_RELEASE }}/" .env README.md
+
+                echo "BRANCH_NAME=upgrade-$major.$minor.$patch" >> $GITHUB_ENV
+                echo "TAG_NAME=v$major.$minor.$patch" >> $GITHUB_ENV
+                echo "NEW_RELEASE=true" >> $GITHUB_ENV
+              else
+                echo "No new release"
+                echo "NEW_RELEASE=false" >> $GITHUB_ENV
+              fi
             fi
-
-            # Branch DNE, update MATTERMOST_IMAGE_TAG
-            sed -i "s/MATTERMOST_IMAGE_TAG=\(.*\)/MATTERMOST_IMAGE_TAG=${{ env.LATEST_RELEASE }}/" .env README.md
-
-            echo "BRANCH_NAME=upgrade-$major.$minor.$patch" >> $GITHUB_ENV
-            echo "TAG_NAME=v$major.$minor.$patch" >> $GITHUB_ENV
-            echo "NEW_RELEASE=true" >> $GITHUB_ENV
           fi
         else
           echo "No new release"
