@@ -1,5 +1,8 @@
 name: Docker build and Publish
 on:
+  # allow manual triggers
+  workflow_dispatch:
+  # build every version tag
   push:
     tags:
       - v*
