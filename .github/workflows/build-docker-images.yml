@@ -70,7 +70,7 @@ jobs:
           echo PLATFORM=$PLATFORM >> $GITHUB_OUTPUT
 
       - name: Compress binary artifact
-        run: tar -C root -czf mattermost-enterprise-edition-${{ github.ref_name }}-${{ steps.get-platform-name.outputs.PLATFORM }}.tar.gz .
+        run: tar -C root -czf mattermost-enterprise-edition-${{ github.ref_name }}-${{ steps.get-platform-name.outputs.PLATFORM }}.tar.gz mattermost
 
       - name: Upload binary artifact
         uses: actions/upload-artifact@v4
