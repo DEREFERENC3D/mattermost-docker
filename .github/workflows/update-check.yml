@@ -45,7 +45,7 @@ jobs:
             fi
 
             # Branch DNE, update MATTERMOST_IMAGE_TAG
-            sed -i "s/MATTERMOST_IMAGE_TAG=\(.*\)/MATTERMOST_IMAGE_TAG=${{ env.LATEST_RELEASE }}/" .env
+            sed -i "s/MATTERMOST_IMAGE_TAG=\(.*\)/MATTERMOST_IMAGE_TAG=${{ env.LATEST_RELEASE }}/" .env README.md
 
             echo "BRANCH_NAME=upgrade-$major.$minor.$patch" >> $GITHUB_ENV
             echo "TAG_NAME=v$major.$minor.$patch" >> $GITHUB_ENV
@@ -63,7 +63,7 @@ jobs:
         git config --global user.name 'github-actions'
         git config --global user.email 'github-actions@github.com'
         git checkout -b ${{ env.BRANCH_NAME }} || git checkout ${{ env.BRANCH_NAME }}
-        git add .env
+        git add .
         git commit -m "chore: Upgrade to ${{ env.LATEST_RELEASE }}"
         git tag ${{ env.TAG_NAME }}
         git push origin ${{ env.BRANCH_NAME }} ${{ env.TAG_NAME }}
