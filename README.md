@@ -15,7 +15,7 @@ This repository contains source files for building Mattermost server Docker imag
 
 ```bash
 $ # pick a version
-$ export $(grep MATTERMOST_IMAGE_TAG= .env)  # e.g. MATTERMOST_IMAGE_TAG=v10.7.1
+$ export $(grep MATTERMOST_IMAGE_TAG= .env)  # e.g. MATTERMOST_IMAGE_TAG=v10.7.2
 $ cd docker
 $ docker build \
 	-t mattermost-enterprise-edition:$MATTERMOST_IMAGE_TAG \
