@@ -23,6 +23,10 @@ $ docker build \
 	-t mattermost-enterprise-edition:$MATTERMOST_IMAGE_TAG \
 	# add if you wish to export compiled binaries
 	-o output \
+	# add to build for a different platform than your native one
+	# e.g. build an image for ARM on an x86 PC
+	# or build for multiple architectures:
+	--platform=linux/amd64,linux/arm64
 	. \
 	--build-arg MATTERMOST_IMAGE_TAG=$MATTERMOST_IMAGE_TAG \
 	# be sure to set something here, else this will be considered a "development" build and some functionality will break
