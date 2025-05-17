@@ -29,7 +29,9 @@ $ docker build \
 	--platform=linux/amd64,linux/arm64
 	. \
 	--build-arg MATTERMOST_IMAGE_TAG=$MATTERMOST_IMAGE_TAG \
-	# be sure to set something here, else this will be considered a "development" build and some functionality will break
+	# be sure to set something here, else this will be considered
+	# a "development" build and some functionality will break
+	# the following works for sh/bash/zsh and some other shells:
 	--build-arg BUILD_NUMBER=$RANDOM
 ```
 
