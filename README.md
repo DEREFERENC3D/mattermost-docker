@@ -13,12 +13,16 @@ This repository contains source files for building Mattermost server Docker imag
 
 # Building
 
+The entire idea behind this repository is to run the build process in a container, fixing issues with build consistency, but also to create container images to run Mattermost in. It is however possible to only use Docker for building and export the resulting binaries for use outside of a container - as per [the Docker docs](https://docs.docker.com/build/building/export/), simply add the `output` parameter. In the following example, binaries should be available in `./output/mattermost`.
+
 ```bash
 $ # pick a version
 $ export $(grep MATTERMOST_IMAGE_TAG= .env)  # e.g. MATTERMOST_IMAGE_TAG=v10.8.0
 $ cd docker
 $ docker build \
 	-t mattermost-enterprise-edition:$MATTERMOST_IMAGE_TAG \
+	# add if you wish to export compiled binaries
+	-o output \
 	. \
 	--build-arg MATTERMOST_IMAGE_TAG=$MATTERMOST_IMAGE_TAG \
 	# be sure to set something here, else this will be considered a "development" build and some functionality will break
