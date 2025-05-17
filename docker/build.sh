@@ -24,6 +24,10 @@ cd server
 # and throws build errors. WTF, seriously?
 go mod edit -replace=github.com/mattermost/mattermost/server/public=./public
 go get github.com/mattermost/mattermost/server/public
+# Since v10.8.0, this file is now included seemingly unconditionally.
+# Remove it since all it does is include the closed-source components
+# that we do not have.
+rm enterprise/external_imports.go
 
 make "build-${OS}-${ARCH}"
 make "package-${OS}-${ARCH}"
