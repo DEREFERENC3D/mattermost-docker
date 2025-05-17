@@ -54,7 +54,7 @@ jobs:
 
                 # Branch DNE, update MATTERMOST_IMAGE_TAG
                 sed -i 's/MATTERMOST_IMAGE_TAG=\(.*\)/MATTERMOST_IMAGE_TAG=${{ env.LATEST_RELEASE }}/' .env
-                sed -i "s/${MATTERMOST_IMAGE_TAG}/${{ env.LATEST_RELEASE }}/g" .env
+                sed -i "s/${MATTERMOST_IMAGE_TAG}/${{ env.LATEST_RELEASE }}/g" README.md
 
                 echo "BRANCH_NAME=upgrade-$major.$minor.$patch" >> $GITHUB_ENV
                 echo "TAG_NAME=v$major.$minor.$patch" >> $GITHUB_ENV
