@@ -17,7 +17,7 @@ The entire idea behind this repository is to run the build process in a containe
 
 ```bash
 $ # pick a version
-$ export $(grep MATTERMOST_IMAGE_TAG= .env)  # e.g. MATTERMOST_IMAGE_TAG=v10.8.0
+$ export $(grep MATTERMOST_IMAGE_TAG= .env)  # e.g. MATTERMOST_IMAGE_TAG=v10.8.1
 $ cd docker
 $ docker build \
 	-t mattermost-enterprise-edition:$MATTERMOST_IMAGE_TAG \
