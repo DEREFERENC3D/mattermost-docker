@@ -35,7 +35,7 @@ RUN git clone \
 	-b ${MATTERMOST_IMAGE_TAG} \
 	https://github.com/mattermost/mattermost.git .
 COPY build.sh patches/0001-enterprise.patch patches/0002-crack.patch .
-RUN git apply 0001-enterprise.patch 0002-crack.patch
+RUN git apply -3 0001-enterprise.patch 0002-crack.patch
 
 ARG OS=linux
 ARG ARCH=current
