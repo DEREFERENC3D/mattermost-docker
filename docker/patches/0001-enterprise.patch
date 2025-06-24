@@ -1,4 +1,4 @@
-From 96c955e2dc304605a0c1ecf1b0ef4bc2e78a7ad4 Mon Sep 17 00:00:00 2001
+From 78b8b9e274e54d065a7da14e1efb300af33df39b Mon Sep 17 00:00:00 2001
 From: DEREFERENC3D <DEREFERENC3D@protonmail.com>
 Date: Sat, 17 May 2025 12:32:12 +0000
 Subject: [PATCH 1/1] server: Allow enterprise build without closed-source
@@ -10,10 +10,10 @@ Subject: [PATCH 1/1] server: Allow enterprise build without closed-source
  2 files changed, 20 insertions(+), 13 deletions(-)
 
 diff --git a/server/Makefile b/server/Makefile
-index d584b41..7d230d0 100644
+index 61c4191666..4013a80a62 100644
 --- a/server/Makefile
 +++ b/server/Makefile
-@@ -54,19 +54,17 @@ BUILD_ENTERPRISE ?= true
+@@ -60,19 +60,17 @@ BUILD_ENTERPRISE ?= true
  BUILD_ENTERPRISE_READY = false
  BUILD_TYPE_NAME = team
  BUILD_HASH_ENTERPRISE = none
@@ -37,8 +37,8 @@ index d584b41..7d230d0 100644
  else
  	BUILD_ENTERPRISE_READY = false
  	BUILD_TYPE_NAME = team
-@@ -155,12 +153,16 @@ PLUGIN_PACKAGES += mattermost-plugin-msteams-meetings-v2.2.0
- PLUGIN_PACKAGES += mattermost-plugin-metrics-v0.6.0
+@@ -160,12 +158,16 @@ PLUGIN_PACKAGES += mattermost-plugin-msteams-meetings-v2.2.0
+ PLUGIN_PACKAGES += mattermost-plugin-metrics-v0.7.0
  PLUGIN_PACKAGES += mattermost-plugin-channel-export-v1.2.1
  
 -EE_PACKAGES=$(shell $(GO) list $(BUILD_ENTERPRISE_DIR)/...)
@@ -58,7 +58,7 @@ index d584b41..7d230d0 100644
  endif
  
  CONFIG_FILE_PATH ?= ./config/config.json
-@@ -399,8 +401,10 @@ ifneq ($(IGNORE_GO_WORK_IF_EXISTS),true)
+@@ -400,8 +402,10 @@ ifneq ($(IGNORE_GO_WORK_IF_EXISTS),true)
  	$(GO) work init
  	$(GO) work use .
  	$(GO) work use ./public
@@ -71,7 +71,7 @@ index d584b41..7d230d0 100644
  endif
  
 diff --git a/server/build/release.mk b/server/build/release.mk
-index 42f5235..43946da 100644
+index 42f523525c..43946da9d4 100644
 --- a/server/build/release.mk
 +++ b/server/build/release.mk
 @@ -128,10 +128,13 @@ package-prep:
@@ -91,5 +91,5 @@ index 42f5235..43946da 100644
  endif
  	cp ../NOTICE.txt $(DIST_PATH)
 -- 
-2.47.2
+2.49.0
 
