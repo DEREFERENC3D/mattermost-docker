@@ -51,7 +51,7 @@ Untested, but something like this should work. Make sure to pass `run.env` as th
 
 ```bash
 $ # pick a version
-$ export $(grep MATTERMOST_IMAGE_TAG= .env)  # e.g. MATTERMOST_IMAGE_TAG=v10.8.0
+$ export $(grep MATTERMOST_IMAGE_TAG= .env)  # e.g. MATTERMOST_IMAGE_TAG=v10.9.1
 $ docker run \
 	--name=mattermost \
 	--env-file=run.env \
