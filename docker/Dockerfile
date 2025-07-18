@@ -1,4 +1,4 @@
-FROM alpine:3.21 AS build
+FROM alpine AS build
 
 # build dependencies
 RUN apk add --no-cache \
@@ -25,6 +25,11 @@ RUN apk add --no-cache \
 	nasm \
 	clang \
 	zlib-dev
+
+# ugly NPM downgrade - required to build the web app
+RUN npm install -g npm@10 && \
+	ln -sf /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/bin/npm && \
+	ln -sf /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/bin/npx
 
 WORKDIR /build
 
