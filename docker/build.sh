@@ -11,6 +11,13 @@ if [[ "${ARCH}" -eq 'current' ]]; then
 fi
 
 export GOTOOLCHAIN="$(sed -n 's/toolchain //p' server/go.mod)"
+if [[ -z "${GOTOOLCHAIN}" ]]; then
+	export GOTOOLCHAIN="go$(sed -nE 's/^\s*go ([0-9]+\.[0-9]+\.[0-9]+)$/\1/p' server/go.mod)"
+fi
+if [[ -z "${GOTOOLCHAIN}" ]]; then
+	echo "Failed to get GOTOOLCHAIN from server/go.mod"
+	exit 1
+fi
 
 ulimit -n 8096
 
