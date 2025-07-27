@@ -1,0 +1,9 @@
+services:
+  mattermost:
+    networks:
+      node-red_default:
+        ipv4_address: 10.1.6.254
+
+networks:
+  node-red_default:
+    external: true
