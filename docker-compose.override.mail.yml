@@ -1,0 +1,9 @@
+services:
+  mattermost:
+    networks:
+      mail_default:
+        ipv4_address: 10.1.8.254
+
+networks:
+  mail_default:
+    external: true
