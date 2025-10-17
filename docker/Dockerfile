@@ -1,4 +1,6 @@
-FROM alpine:3.21 AS build
+ARG REPO_CLONE_TYPE="minimal"
+
+FROM alpine:3.21 AS build-base
 
 # build dependencies
 RUN apk add --no-cache \
@@ -28,12 +30,22 @@ RUN apk add --no-cache \
 
 WORKDIR /build
 
+FROM build-base AS build-full-clone
+ARG MATTERMOST_IMAGE_TAG
+RUN git clone \
+	-b ${MATTERMOST_IMAGE_TAG} \
+	https://github.com/mattermost/mattermost.git .
+
+FROM build-base AS build-minimal-clone
 ARG MATTERMOST_IMAGE_TAG
 RUN git clone \
 	--depth 1 \
 	--single-branch \
 	-b ${MATTERMOST_IMAGE_TAG} \
 	https://github.com/mattermost/mattermost.git .
+
+FROM build-${REPO_CLONE_TYPE}-clone AS build
+
 COPY build.sh patches/0001-enterprise.patch patches/0002-crack.patch .
 RUN git apply -3 0001-enterprise.patch 0002-crack.patch
 

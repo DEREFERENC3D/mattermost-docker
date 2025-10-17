@@ -64,6 +64,6 @@ $ docker run \
 
 # Updating
 
-Should (🤞) be as simple as changing the version in `.env` and rebuilding. The source code patches may need updating.
+Should (🤞) be as simple as changing the version in `.env` and rebuilding. The source code patches may need updating. If using the full repo for Mattermost's source code, `git` can attempt a 3-way merge automatically - to do so it, set the `REPO_CLONE_TYPE=full` build arg (the default is a minimal-depth, single-branch clone to optimize performance - minimize bandwidth used and disk space wasted during build).
 
 The repository contains a GitHub Actions workflow which should check for new versions on a schedule and do exactly that, adding a new branch, tag, and PR to `main`. Another workflow builds every tag starting with `v`, adding a new prebuilt image in GHCR for each new version.

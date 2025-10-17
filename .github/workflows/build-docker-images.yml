@@ -59,6 +59,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
+            REPO_CLONE_TYPE=full
             MATTERMOST_IMAGE_TAG=${{ github.ref_name }}
             BUILD_NUMBER=${{ github.run_id }}
           outputs: root
