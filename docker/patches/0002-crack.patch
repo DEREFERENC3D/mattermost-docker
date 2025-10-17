@@ -1,32 +1,32 @@
-From ff161a40bf07ffd35c16691cbbda5ecf0ebfe8db Mon Sep 17 00:00:00 2001
+From 712bd12bf878475b0926a0809b43a5bb1830b89a Mon Sep 17 00:00:00 2001
 From: DEREFERENC3D <DEREFERENC3D@protonmail.com>
 Date: Fri, 14 Feb 2025 12:06:17 +0100
-Subject: [PATCH 1/1] server: Remove license certificate validation, support
+Subject: [PATCH 2/2] server: Remove license certificate validation, support
  signatureless license files
 
 ---
- server/channels/utils/license.go | 34 ++++----------------------------
- 1 file changed, 4 insertions(+), 30 deletions(-)
+ server/channels/utils/license.go | 38 ++++----------------------------
+ 1 file changed, 4 insertions(+), 34 deletions(-)
 
 diff --git a/server/channels/utils/license.go b/server/channels/utils/license.go
-index fdd13b92d8..8cf8fe67dc 100644
+index 0f873e0ebf..32e926380d 100644
 --- a/server/channels/utils/license.go
 +++ b/server/channels/utils/license.go
-@@ -4,13 +4,9 @@
+@@ -4,13 +4,8 @@
  package utils
  
  import (
 -	"crypto"
 -	"crypto/rsa"
- 	"crypto/sha512"
+-	"crypto/sha512"
 -	"crypto/x509"
  	"encoding/base64"
  	"encoding/json"
 -	"encoding/pem"
  	"fmt"
  	"io"
- 	"net/http"
-@@ -66,37 +62,15 @@ func (l *LicenseValidatorImpl) ValidateLicense(signed []byte) (string, error) {
+ 	"maps"
+@@ -67,36 +62,11 @@ func (l *LicenseValidatorImpl) ValidateLicense(signed []byte) (string, error) {
  		decoded = decoded[:len(decoded)-1]
  	}
  
@@ -50,24 +50,23 @@ index fdd13b92d8..8cf8fe67dc 100644
 -	public, err := x509.ParsePKIXPublicKey(block.Bytes)
 -	if err != nil {
 -		return "", fmt.Errorf("Encountered error signing license: %w", err)
-+	if !json.Valid(plaintext) {
-+		// there likely was no signature and we just cut off part of the JSON
-+		plaintext = decoded
- 	}
- 
+-	}
+-
 -	rsaPublic := public.(*rsa.PublicKey)
 -
- 	h := sha512.New()
- 	h.Write(plaintext)
+-	h := sha512.New()
+-	h.Write(plaintext)
 -	d := h.Sum(nil)
 -
 -	err = rsa.VerifyPKCS1v15(rsaPublic, crypto.SHA512, d, signature)
 -	if err != nil {
 -		return "", fmt.Errorf("Invalid signature: %w", err)
--	}
++	if !json.Valid(plaintext) {
++		// there likely was no signature and we just cut off part of the JSON
++		plaintext = decoded
+ 	}
  
  	return string(plaintext), nil
- }
 -- 
-2.49.0
+2.51.0
 
