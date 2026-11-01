@@ -1,0 +1,9 @@
+services:
+  mattermost:
+    networks:
+      matrix_default:
+        ipv4_address: 10.1.16.254
+
+networks:
+  matrix_default:
+    external: true
