@@ -1,0 +1,4 @@
+services:
+  mattermost:
+    extra_hosts:
+      - "${TURN_DOMAIN}:${TURN_IP}"
